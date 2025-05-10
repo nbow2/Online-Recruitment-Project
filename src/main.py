@@ -5,4 +5,4 @@ print("hi ahmed")
 
 class LOL:
  def __init__(self):
-    Self.root = tk.Tk()
+    Self.root = tk.Tk() 
