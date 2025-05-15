@@ -3,37 +3,24 @@ from seeker import JobSeeker
 from Employer import Employer
 from Vacancy_job import Vacancy
 from Saved_Vacancy import SavedVacancy
+from Application import Application
+from Application_details import ApplicationDetail
+
 
 # Initialize the shared base
 base = User()
 
+app_detail = ApplicationDetail()
 
-
-
-
-
-
-# Create a new vacancy by employer
-vac = Vacancy()
-vacancyid = vac.create_vacancy(
-    employerid=1,
-    title="Software Engineer",
-    description="Entry-level Python developer position",
-    location="Remote",
-    industry="IT",
-    salary=65000.00,
-    requiredexperience="0-2 years",
-    ishidden=False,
-    dateposted="2025-05-15"
-)
-
-print(f"Vacancy created with ID = {vacancyid}")
-
-# Save the vacancy by job seeker
-sv = SavedVacancy()
-sv.save_vacancy(seekerid=1, vacancyid=vacancyid)
-#print(f"Vacancy {vacancyid} saved by seeker {}")
-
-# Optional: List all saved vacancies for the seeker
-saved_list = sv.list_saved(seekerid=1)
-#print(f"Saved vacancies for seeker {seekerid}: {saved_list}")
+details = app_detail.get_full_details()
+for row in details:
+    print("\n--- Application Detail ---")
+    print(f"Detail ID       : {row[0]}")
+    print(f"Application ID  : {row[1]}")
+    print(f"Seeker Name     : {row[2]}")
+    print(f"Vacancy Title   : {row[3]}")
+    print(f"Cover Letter    : {row[4]}")
+    print(f"Interview Notes : {row[5]}")
+    print(f"Review Status   : {row[6]}")
+    print(f"Reviewer Name   : {row[7]}")
+    print(f"Last Updated    : {row[8]}")
