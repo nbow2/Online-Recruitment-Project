@@ -30,6 +30,13 @@ class SignupWindow:
                 entry.grid(row=i, column=1, padx=10)
                 self.entries[label] = entry
 
+                # Show password checkbox
+                if label == "Password":
+                    self.show_pass = tk.BooleanVar()
+                    tk.Checkbutton(form_frame, text="Show", variable=self.show_pass,
+                                   command=self.toggle_signup_password_visibility,
+                                   bg="black", fg="white").grid(row=i, column=2, padx=5)
+
         # Buttons
         btn_frame = tk.Frame(self.root, bg="black")
         btn_frame.pack(pady=20)
@@ -41,6 +48,12 @@ class SignupWindow:
                   font=("Arial", 14, "bold"), width=15).pack(side="right", padx=10)
 
         self.root.mainloop()
+
+    def toggle_signup_password_visibility(self):
+        if self.show_pass.get():
+            self.entries["Password"].config(show="")
+        else:
+            self.entries["Password"].config(show="*")
 
     def signup_user(self):
         email = self.entries["Email"].get()
@@ -64,7 +77,7 @@ class SignupWindow:
                 INSERT INTO user (email, password, name, location, usertype, phonenum, dob, age)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (email, password, name, location, usertype, phonenum, dob, age))
-            
+
             userid = cursor.lastrowid
             # Insert into jobseeker or employer table
             if usertype == "jobseeker":
@@ -75,7 +88,7 @@ class SignupWindow:
                 cursor.execute("""
                 INSERT INTO employer (userid, company_name, company_description, industry)
                 VALUES (?, ?, ?, ?)""", (userid, '', '', ''))
-                
+
             conn.commit()
 
             messagebox.showinfo("Success", f"{usertype.capitalize()} signed up successfully!")

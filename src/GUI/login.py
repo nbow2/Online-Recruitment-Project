@@ -30,6 +30,18 @@ class LoginWindow:
         self.usertype_menu.config(font=("Arial", 12), bg="white")
         self.usertype_menu.grid(row=2, column=1)
 
+        # Show password checkbox
+        self.show_pass = tk.BooleanVar()
+        tk.Checkbutton(form_frame, text="Show", variable=self.show_pass,
+                       command=self.toggle_password_visibility,
+                       bg="black", fg="white").grid(row=1, column=2, padx=5)
+
+        tk.Label(form_frame, text="User Type:", bg="black", fg="white", font=("Arial", 12)).grid(row=2, column=0, sticky="w", pady=10)
+        self.usertype_var = tk.StringVar(value="jobseeker")
+        self.usertype_menu = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer")
+        self.usertype_menu.config(font=("Arial", 12), bg="white")
+        self.usertype_menu.grid(row=2, column=1)
+
         # Buttons
         btn_frame = tk.Frame(self.root, bg="black")
         btn_frame.pack(pady=20)
@@ -41,6 +53,12 @@ class LoginWindow:
                   font=("Arial", 14, "bold"), width=15).pack(side="right", padx=10)
 
         self.root.mainloop()
+
+    def toggle_password_visibility(self):
+        if self.show_pass.get():
+            self.pass_entry.config(show="")
+        else:
+            self.pass_entry.config(show="*")
 
     def login(self):
         email = self.email_entry.get()
@@ -64,6 +82,6 @@ class LoginWindow:
             messagebox.showerror("Login Failed", "Invalid credentials or user type")
 
     def signup(self):
-        from GUI.signup import SignupWindow  
+        from GUI.signup import SignupWindow
         self.root.destroy()
         SignupWindow()
