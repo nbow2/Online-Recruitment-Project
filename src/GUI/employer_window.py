@@ -29,7 +29,6 @@ class EmployerWindow:
         tk.Label(info_frame, text=f"User ID: {userid}", font=("Arial", 12),
                  fg="white", bg="black").pack(pady=5)
 
-        # Add 6 red buttons: 3 on top row, 3 on bottom row
         btn_frame = tk.Frame(self.root, bg="black")
         btn_frame.pack(pady=30)
 
@@ -42,7 +41,7 @@ class EmployerWindow:
                 bg="red",
                 fg="white",
                 font=("Arial", 14, "bold"),
-                width=10,
+                width=15,
                 height=2
             ).grid(row=row, column=col, padx=8, pady=8)
 
