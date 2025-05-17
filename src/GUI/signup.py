@@ -22,7 +22,7 @@ class SignupWindow:
             tk.Label(form_frame, text=label + ":", bg="black", fg="white", font=("Arial", 12)).grid(row=i, column=0, sticky="e", pady=5, padx=10)
             if label == "User Type":
                 self.usertype_var = tk.StringVar(value="jobseeker")
-                dropdown = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer")
+                dropdown = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer", "admin")
                 dropdown.config(font=("Arial", 12), bg="white")
                 dropdown.grid(row=i, column=1, padx=10)
             else:
@@ -88,6 +88,8 @@ class SignupWindow:
                 cursor.execute("""
                 INSERT INTO employer (userid, company_name, company_description, industry)
                 VALUES (?, ?, ?, ?)""", (userid, '', '', ''))
+            elif usertype == "admin":
+                pass
 
             conn.commit()
 

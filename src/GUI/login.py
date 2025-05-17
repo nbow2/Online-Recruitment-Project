@@ -3,6 +3,7 @@ from tkinter import messagebox
 import sqlite3
 from GUI.jobseeker_window import JobSeekerWindow
 from GUI.employer_window import EmployerWindow
+from GUI.admin_window import AdminWindow
 
 class LoginWindow:
     def __init__(self):
@@ -26,7 +27,7 @@ class LoginWindow:
 
         tk.Label(form_frame, text="User Type:", bg="black", fg="white", font=("Arial", 12)).grid(row=2, column=0, sticky="w", pady=10)
         self.usertype_var = tk.StringVar(value="jobseeker")
-        self.usertype_menu = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer")
+        self.usertype_menu = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer", "admin")
         self.usertype_menu.config(font=("Arial", 12), bg="white")
         self.usertype_menu.grid(row=2, column=1)
 
@@ -38,7 +39,7 @@ class LoginWindow:
 
         tk.Label(form_frame, text="User Type:", bg="black", fg="white", font=("Arial", 12)).grid(row=2, column=0, sticky="w", pady=10)
         self.usertype_var = tk.StringVar(value="jobseeker")
-        self.usertype_menu = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer")
+        self.usertype_menu = tk.OptionMenu(form_frame, self.usertype_var, "jobseeker", "employer", "admin")
         self.usertype_menu.config(font=("Arial", 12), bg="white")
         self.usertype_menu.grid(row=2, column=1)
 
@@ -76,8 +77,10 @@ class LoginWindow:
             self.root.destroy()
             if usertype == "jobseeker":
                 JobSeekerWindow(userid)
-            else:
+            elif usertype == "employr":
                 EmployerWindow(userid)
+            elif usertype == "admin":
+                AdminWindow(userid)
         else:
             messagebox.showerror("Login Failed", "Invalid credentials or user type")
 
