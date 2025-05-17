@@ -112,12 +112,24 @@ class JobSeekerWindow:
             command=self.open_applied_jobs_window
         ).grid(row=1, column=2, padx=8, pady=8)
 
+        # Button 7: Logout
+        tk.Button(
+            btn_frame,
+            text="Logout",
+            bg="blue",
+            fg="white",
+            font=("Arial", 14, "bold"),
+            width=15,
+            height=2,
+            command=self.logout
+        ).grid(row=2, column=1, padx=8, pady=8)
+
         self.root.mainloop()
 
     def open_insert_info_window(self):
         insert_win = tk.Toplevel(self.root)
         insert_win.title("Insert Seeker Info")
-        insert_win.geometry("400x300")
+        insert_win.geometry("500x350")
         insert_win.configure(bg="black")
 
         tk.Label(insert_win, text="Insert Your Info", font=("Arial", 16, "bold"),
@@ -492,3 +504,8 @@ class JobSeekerWindow:
         for row in cursor.fetchall():
             tree.insert("", "end", values=row)
         conn.close()
+
+    def logout(self):
+        self.root.destroy()
+        from GUI.login import LoginWindow
+        LoginWindow()

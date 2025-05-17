@@ -58,6 +58,18 @@ class EmployerWindow:
                 command=action
             ).grid(row=row, column=col, padx=8, pady=8)
 
+        # Add Logout button (row 2, center column)
+        tk.Button(
+            btn_frame,
+            text="Logout",
+            bg="red",
+            fg="white",
+            font=("Arial", 14, "bold"),
+            width=20,
+            height=2,
+            command=self.logout
+        ).grid(row=2, column=1, padx=8, pady=8)
+
         self.root.mainloop()
 
     # Placeholder methods to be implemented
@@ -570,3 +582,8 @@ class EmployerWindow:
 
         # Bind dropdown
         vacancy_menu.bind("<<ComboboxSelected>>", load_details)
+
+    def logout(self):
+        self.root.destroy()
+        from GUI.login import LoginWindow
+        LoginWindow()
