@@ -17,10 +17,11 @@ class Admin(User):
         self.cursor.execute("""
             SELECT v.vacancyid, v.title, v.location, v.industry, v.salary, u.name AS employer_name
             FROM vacancy v
-            JOIN employer e ON v.employerid = e.employeeid
-            JOIN user u ON e.userid = u.userid
+            LEFT JOIN employer e ON v.employerid = e.employerid
+            LEFT JOIN user u ON e.userid = u.userid
         """)
         return self.cursor.fetchall()
+
 
     def delete_vacancy_by_id(self, vacancyid):
         # Delete related applicationdetail → application → vacancy
