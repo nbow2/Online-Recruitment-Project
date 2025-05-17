@@ -6,6 +6,9 @@ class AdminWindow:
     def __init__(self, userid):
         self.userid = userid
         self.admin = Admin()
+        self.analytics = self.admin.analytics
+        self.operations = self.admin.operations
+
         self.root = tk.Tk()
         self.root.title("Admin Panel")
         self.root.geometry("950x600")
@@ -19,12 +22,15 @@ class AdminWindow:
 
         self.user_tab = tk.Frame(tab_control, bg="black")
         self.vacancy_tab = tk.Frame(tab_control, bg="black")
+        self.dashboard = tk.Frame(tab_control, bg="black")
 
         tab_control.add(self.user_tab, text="Users")
         tab_control.add(self.vacancy_tab, text="Vacancies")
+        tab_control.add(self.dashboard, text="Dashboard")  
 
         self.init_user_tab()
         self.init_vacancy_tab()
+        self.init_dashboard_tab()
 
         self.root.mainloop()
 
@@ -44,13 +50,13 @@ class AdminWindow:
         btn_frame.pack(pady=10)
 
         tk.Button(btn_frame, text="Delete User", command=self.delete_user,
-                  bg="red", fg="white", font=("Arial", 12, "bold"), width=15).pack(side="left", padx=10)
+                  bg="green", fg="white", font=("Arial", 12, "bold"), width=15).pack(side="left", padx=10)
 
         tk.Button(btn_frame, text="Promote to Admin", command=self.promote_user,
-                  bg="red", fg="white", font=("Arial", 12, "bold"), width=18).pack(side="left", padx=10)
+                  bg="green", fg="white", font=("Arial", 12, "bold"), width=18).pack(side="left", padx=10)
 
         tk.Button(btn_frame, text="Demote Admin", command=self.demote_user,
-                  bg="red", fg="white", font=("Arial", 12, "bold"), width=18).pack(side="left", padx=10)
+                  bg="green", fg="white", font=("Arial", 12, "bold"), width=18).pack(side="left", padx=10)
 
     def load_users(self):
         self.user_tree.delete(*self.user_tree.get_children())
@@ -101,7 +107,7 @@ class AdminWindow:
         self.load_vacancies()
 
         tk.Button(self.vacancy_tab, text="Delete Vacancy", command=self.delete_vacancy,
-                  bg="red", fg="white", font=("Arial", 12, "bold"), width=20).pack(pady=10)
+                  bg="green", fg="white", font=("Arial", 12, "bold"), width=20).pack(pady=10)
 
     def load_vacancies(self):
         self.vac_tree.delete(*self.vac_tree.get_children())
@@ -118,3 +124,125 @@ class AdminWindow:
             self.admin.delete_vacancy_by_id(vacancyid)
             self.load_vacancies()
             messagebox.showinfo("Deleted", "Vacancy deleted successfully.")
+
+    # ------------------------ DASHBOARD TAB ------------------------
+
+    def init_dashboard_tab(self):
+        btn_frame = tk.Frame(self.dashboard, bg="black")
+        btn_frame.pack(pady=40)
+
+        buttons = [
+            ("Most Applied Job", self.show_most_applied_job),
+            ("Jobs w/ 0 Applicants\nLast Month", self.show_jobs_with_no_applicants),
+            ("Top Employer", self.show_top_employer),
+            ("Search Vacancies", self.search_vacancies),
+            ("Search Job Seekers", self.search_job_seekers),
+            ("Logout", self.logout)
+        ]
+
+        for i, (label, cmd) in enumerate(buttons):
+            tk.Button(
+                btn_frame,
+                text=label,
+                bg="green",  # Changed to green
+                fg="white",
+                font=("Arial", 14, "bold"),
+                width=18,
+                height=2,
+                command=cmd
+            ).grid(row=i // 3, column=i % 3, padx=15, pady=15)
+
+    def show_most_applied_job(self):
+        result = self.analytics.most_applied_job_title()
+        if result:
+            title, count = result
+            messagebox.showinfo("Most Applied Job", f"{title} ({count} applicants)")
+        else:
+            messagebox.showinfo("No Data", "No applications found.")
+
+    def show_jobs_with_no_applicants(self):
+        jobs = self.analytics.jobs_with_no_applicants_last_month()
+        if jobs:
+            titles = "\n".join(job[0] for job in jobs)
+            messagebox.showinfo("Jobs with No Applicants", titles)
+        else:
+            messagebox.showinfo("No Results", "All jobs received applications last month.")
+
+    def show_top_employer(self):
+        result = self.analytics.top_employer_by_announcements()
+        if result:
+            name, count = result
+            messagebox.showinfo("Top Employer", f"{name} with {count} job announcements")
+        else:
+            messagebox.showinfo("No Data", "No employers found.")
+
+    def search_vacancies(self):
+        win = tk.Toplevel(self.root)
+        win.title("Search Vacancies")
+        win.geometry("400x250")
+        win.configure(bg="black")
+
+        tk.Label(win, text="Search Vacancies", font=("Arial", 16, "bold"), fg="white", bg="black").pack(pady=10)
+
+        frame = tk.Frame(win, bg="black")
+        frame.pack(pady=10)
+
+        fields = ["Industry", "Location", "Required Experience"]
+        vars = {}
+        for i, label in enumerate(fields):
+            tk.Label(frame, text=label + ":", bg="black", fg="white").grid(row=i, column=0, sticky="e", padx=5, pady=5)
+            entry = tk.Entry(frame, width=30)
+            entry.grid(row=i, column=1, pady=5)
+            vars[label] = entry
+
+        def run_search():
+            results = self.operations.search_vacancies(
+                vars["Industry"].get(),
+                vars["Location"].get(),
+                vars["Required Experience"].get()
+            )
+            if results:
+                out = "\n".join(f"{r[1]} | {r[2]} | {r[5]} | {r[6]}" for r in results)
+                messagebox.showinfo("Matches", out)
+            else:
+                messagebox.showinfo("No Matches", "No vacancies match the criteria.")
+
+        tk.Button(win, text="Search", command=run_search, bg="green", fg="white").pack(pady=10)
+
+    def search_job_seekers(self):
+        win = tk.Toplevel(self.root)
+        win.title("Search Job Seekers")
+        win.geometry("400x250")
+        win.configure(bg="black")
+
+        tk.Label(win, text="Search Job Seekers", font=("Arial", 16, "bold"), fg="white", bg="black").pack(pady=10)
+
+        frame = tk.Frame(win, bg="black")
+        frame.pack(pady=10)
+
+        fields = ["Industry", "Location", "Experience Level"]
+        vars = {}
+        for i, label in enumerate(fields):
+            tk.Label(frame, text=label + ":", bg="black", fg="white").grid(row=i, column=0, sticky="e", padx=5, pady=5)
+            entry = tk.Entry(frame, width=30)
+            entry.grid(row=i, column=1, pady=5)
+            vars[label] = entry
+
+        def run_search():
+            results = self.operations.search_job_seekers(
+                vars["Industry"].get(),
+                vars["Location"].get(),
+                vars["Experience Level"].get()
+            )
+            if results:
+                out = "\n".join(f"{r[0]} | {r[1]} | {r[2]} | {r[3]}" for r in results)
+                messagebox.showinfo("Matches", out)
+            else:
+                messagebox.showinfo("No Matches", "No job seekers match the criteria.")
+
+        tk.Button(win, text="Search", command=run_search, bg="green", fg="white").pack(pady=10)
+
+    def logout(self):
+        self.root.destroy()
+        from GUI.login import LoginWindow
+        LoginWindow()

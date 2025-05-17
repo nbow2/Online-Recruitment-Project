@@ -1,9 +1,13 @@
 from user import User
 import sqlite3
+from analytics import Analytics
+from operations import Operations
 
 class Admin(User):
     def __init__(self, db_path='db.sqlite3'):
         super().__init__(db_path)
+        self.analytics = Analytics()
+        self.operations = Operations()
 
     def get_all_users(self):
         self.cursor.execute("SELECT userid, name, email, usertype FROM user")
