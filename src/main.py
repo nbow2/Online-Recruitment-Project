@@ -1,9 +1,4 @@
 from user import User
-from seeker import JobSeeker
-from Employer import Employer
-from Vacancy_job import Vacancy
-from Saved_Vacancy import SavedVacancy
-from Application import Application
 from Application_details import ApplicationDetail
 from GUI.login import LoginWindow
 

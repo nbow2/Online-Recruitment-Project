@@ -1,6 +1,39 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from admin import Admin
+import sqlite3
+
+def show_industry_report(parent):
+    report_win = tk.Toplevel(parent)
+    report_win.title("Industry Report")
+    report_win.geometry("600x400")
+    report_win.configure(bg="black")
+
+    tk.Label(report_win, text="Industry Report", font=("Arial", 18, "bold"),
+             fg="white", bg="black").pack(pady=15)
+
+    columns = ("Industry", "Total Vacancies", "Total Applications")
+    tree = ttk.Treeview(report_win, columns=columns, show="headings")
+    for col in columns:
+        tree.heading(col, text=col)
+        tree.column(col, anchor="center", width=180)
+    tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+    conn = sqlite3.connect("db.sqlite3")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT 
+            v.industry,
+            COUNT(DISTINCT v.vacancyid) AS total_vacancies,
+            COUNT(a.applicationid) AS total_applications
+        FROM vacancy v
+        LEFT JOIN application a ON v.vacancyid = a.vacancyid
+        GROUP BY v.industry
+        ORDER BY total_applications DESC
+    """)
+    for row in cursor.fetchall():
+        tree.insert("", "end", values=row)
+    conn.close()
 
 class AdminWindow:
     def __init__(self, userid):
@@ -151,6 +184,17 @@ class AdminWindow:
                 height=2,
                 command=cmd
             ).grid(row=i // 3, column=i % 3, padx=15, pady=15)
+
+        tk.Button(
+            btn_frame,
+            text="Industry Report",
+            bg="green",
+            fg="white",
+            font=("Arial", 14, "bold"),
+            width=20,
+            height=2,
+            command=lambda: show_industry_report(self.root)
+        ).grid(row=2, column=0, padx=8, pady=8)
 
     def show_most_applied_job(self):
         result = self.analytics.most_applied_job_title()
