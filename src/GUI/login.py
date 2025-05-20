@@ -76,11 +76,26 @@ class LoginWindow:
             userid = result[0]
             self.root.destroy()
             if usertype == "jobseeker":
-                JobSeekerWindow(userid)
-            elif usertype == "employr":
-                EmployerWindow(userid)
+                try:
+                    JobSeekerWindow(userid)
+                except Exception as e:    
+                    import traceback
+                    traceback.print_exc()
+                    tk.messagebox.showerror("Error", f"Failed to open JobSeekerWindow:\n{e}")
+            elif usertype == "employer":
+                try:
+                    EmployerWindow(userid)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    tk.messagebox.showerror("Error", f"Failed to open EmployerWindow:\n{e}")
             elif usertype == "admin":
-                AdminWindow(userid)
+                try:
+                    AdminWindow(userid)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    tk.messagebox.showerror("Error", f"Failed to open AdminWindow:\n{e}")
         else:
             messagebox.showerror("Login Failed", "Invalid credentials or user type")
 
